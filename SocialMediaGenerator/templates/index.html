@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Social Media Caption Generator</title>
+  <meta name="description" content="Generate AI-powered social media posts and captions for Instagram, LinkedIn, Twitter, and Facebook instantly." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════
+       HEADER / NAV
+  ════════════════════════════════════════════════════════ -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">✨</span>
+        <span class="logo-text">CaptionAI</span>
+      </div>
+      <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark/light mode" title="Toggle theme">
+        <span class="toggle-icon">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════
+       HERO BANNER
+  ════════════════════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">🚀 Powered by AI</div>
+      <h1 class="hero-title">Social Media Caption<br /><span class="gradient-text">Generator</span></h1>
+      <p class="hero-subtitle">
+        Create scroll-stopping captions, trending hashtags & emoji suggestions for any platform — in seconds.
+      </p>
+    </div>
+    <!-- Animated blobs in background -->
+    <div class="blob blob-1" aria-hidden="true"></div>
+    <div class="blob blob-2" aria-hidden="true"></div>
+    <div class="blob blob-3" aria-hidden="true"></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       MAIN CONTENT
+  ════════════════════════════════════════════════════════ -->
+  <main class="main-container">
+
+    <!-- ─── INPUT CARD ──────────────────────────── -->
+    <section class="card input-card" aria-label="Caption settings">
+      <div class="card-header">
+        <h2 class="card-title">
+          <span class="card-title-icon">⚙️</span> Configure Your Post
+        </h2>
+        <p class="card-subtitle">Tell us about your content and let AI do the magic.</p>
+      </div>
+
+      <form id="generatorForm" class="form-grid" novalidate>
+
+        <!-- Platform -->
+        <div class="form-group">
+          <label for="platform" class="form-label">
+            <span class="label-icon">📱</span> Platform
+          </label>
+          <div class="select-wrapper">
+            <select id="platform" name="platform" class="form-select" required>
+              <option value="" disabled selected>Choose platform…</option>
+              <option value="Instagram">📷 Instagram</option>
+              <option value="LinkedIn">💼 LinkedIn</option>
+              <option value="Twitter">🐦 Twitter / X</option>
+              <option value="Facebook">📘 Facebook</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Post Type -->
+        <div class="form-group">
+          <label for="post_type" class="form-label">
+            <span class="label-icon">📝</span> Post Type
+          </label>
+          <div class="select-wrapper">
+            <select id="post_type" name="post_type" class="form-select" required>
+              <option value="" disabled selected>Choose type…</option>
+              <option value="Promotional">🛒 Promotional</option>
+              <option value="Motivational">💪 Motivational</option>
+              <option value="Educational">🎓 Educational</option>
+              <option value="Funny">😄 Funny</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Tone -->
+        <div class="form-group">
+          <label for="tone" class="form-label">
+            <span class="label-icon">🎙️</span> Tone
+          </label>
+          <div class="select-wrapper">
+            <select id="tone" name="tone" class="form-select" required>
+              <option value="" disabled selected>Choose tone…</option>
+              <option value="Professional">🏢 Professional</option>
+              <option value="Casual">☕ Casual</option>
+              <option value="Friendly">🤝 Friendly</option>
+              <option value="Sarcastic">😏 Sarcastic</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Target Audience -->
+        <div class="form-group">
+          <label for="target_audience" class="form-label">
+            <span class="label-icon">🎯</span> Target Audience
+          </label>
+          <input
+            type="text"
+            id="target_audience"
+            name="target_audience"
+            class="form-input"
+            placeholder="e.g., Young professionals, Fitness enthusiasts…"
+            maxlength="100"
+            required
+          />
+        </div>
+
+        <!-- Topic / Keyword (full width) -->
+        <div class="form-group form-group-full">
+          <label for="topic" class="form-label">
+            <span class="label-icon">💡</span> Topic / Keyword
+          </label>
+          <textarea
+            id="topic"
+            name="topic"
+            class="form-textarea"
+            placeholder="Describe your post topic, product, or key message…"
+            rows="3"
+            maxlength="300"
+            required
+          ></textarea>
+          <div class="char-counter">
+            <span id="topicCharCount">0</span> / 300 characters
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-group form-group-full">
+          <button type="submit" id="generateBtn" class="generate-btn">
+            <span class="btn-icon">✨</span>
+            <span class="btn-text">Generate Captions</span>
+          </button>
+        </div>
+
+      </form>
+    </section>
+
+    <!-- ─── LOADING STATE ────────────────────────── -->
+    <div id="loadingState" class="loading-card hidden" aria-live="polite" aria-label="Loading">
+      <div class="loading-inner">
+        <div class="spinner">
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+        </div>
+        <p class="loading-title">Generating your captions…</p>
+        <p class="loading-sub">Our AI is crafting the perfect content for you ✨</p>
+      </div>
+    </div>
+
+    <!-- ─── ERROR BANNER ─────────────────────────── -->
+    <div id="errorBanner" class="error-banner hidden" role="alert">
+      <span class="error-icon">⚠️</span>
+      <span id="errorMessage">Something went wrong. Please try again.</span>
+      <button id="closeError" class="error-close" aria-label="Dismiss error">✕</button>
+    </div>
+
+    <!-- ─── RESULTS ──────────────────────────────── -->
+    <section id="resultsSection" class="results-section hidden" aria-label="Generated captions">
+
+      <!-- Platform tip -->
+      <div id="platformTip" class="platform-tip hidden">
+        <span class="tip-icon">💡</span>
+        <span id="platformTipText"></span>
+      </div>
+
+      <!-- Captions grid -->
+      <div class="results-header">
+        <h2 class="section-title">
+          <span>📝</span> Your Captions
+        </h2>
+        <button id="regenerateBtn" class="regenerate-btn">
+          🔄 Regenerate
+        </button>
+      </div>
+
+      <div id="captionsGrid" class="captions-grid">
+        <!-- Populated by script.js -->
+      </div>
+
+      <!-- Hashtags panel -->
+      <div class="card hashtag-card">
+        <div class="card-header">
+          <h3 class="card-title">
+            <span class="card-title-icon">#</span> Trending Hashtags
+          </h3>
+          <button id="copyHashtags" class="copy-btn-pill" aria-label="Copy all hashtags">
+            📋 Copy All
+          </button>
+        </div>
+        <div id="hashtagsContainer" class="hashtags-container">
+          <!-- Populated by script.js -->
+        </div>
+      </div>
+
+      <!-- Emojis panel -->
+      <div class="card emoji-card">
+        <div class="card-header">
+          <h3 class="card-title">
+            <span class="card-title-icon">😊</span> Recommended Emojis
+          </h3>
+        </div>
+        <div id="emojiRow" class="emoji-row">
+          <!-- Populated by script.js -->
+        </div>
+        <p id="emojiDescription" class="emoji-description"></p>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- ─── FOOTER ───────────────────────────────── -->
+  <footer class="footer">
+    <p>Built with ❤️ using Flask + OpenAI &nbsp;|&nbsp; CaptionAI © 2025</p>
+  </footer>
+
+  <!-- ─── COPY TOAST ───────────────────────────── -->
+  <div id="copyToast" class="copy-toast hidden" role="status">
+    ✅ Copied to clipboard!
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
